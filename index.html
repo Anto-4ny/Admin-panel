@@ -94,24 +94,22 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js"></script>
     <script>
-        // Your web app's Firebase configuration
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
-            authDomain: "antocap-referrals.firebaseapp.com",
-            projectId: "antocap-referrals",
-            storageBucket: "antocap-referrals.appspot.com",
-            messagingSenderId: "1071760453747",
-            appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
-            measurementId: "G-EPLJB8MTRH"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID",
+            measurementId: "YOUR_MEASUREMENT_ID"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        const analytics = firebase.analytics();
 
         // Check if the user is an admin
         async function checkAdmin() {
@@ -173,5 +171,4 @@
         auth.onAuthStateChanged(checkAdmin);
     </script>
 </body>
-    </html>
-    
+</html>
