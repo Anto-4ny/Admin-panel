@@ -58,58 +58,87 @@
 </head>
 <body>
     <h1>Admin Panel</h1>
-    <div class="stats-container">
-        <div class="stat-box">
-            <h2>Total Registered Users</h2>
-            <p id="total-users">0</p>
+    <div id="admin-content" style="display: none;">
+        <div class="stats-container">
+            <div class="stat-box">
+                <h2>Total Registered Users</h2>
+                <p id="total-users">0</p>
+            </div>
+            <div class="stat-box">
+                <h2>Total Paid Users</h2>
+                <p id="total-paid-users">0</p>
+            </div>
+            <div class="stat-box">
+                <h2>Total Amount Collected</h2>
+                <p id="total-amount">0 Ksh</p>
+            </div>
         </div>
-        <div class="stat-box">
-            <h2>Total Paid Users</h2>
-            <p id="total-paid-users">0</p>
-        </div>
-        <div class="stat-box">
-            <h2>Total Amount Collected</h2>
-            <p id="total-amount">0 Ksh</p>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- User data will be inserted here -->
+            </tbody>
+        </table>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Payment Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- User data will be inserted here -->
-        </tbody>
-    </table>
+    <div id="no-access" style="display: none;">
+        <h2>Access Denied</h2>
+        <p>You do not have permission to access this page.</p>
+    </div>
+    
 
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js"></script>
     <script>
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js";
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
+            authDomain: "antocap-referrals.firebaseapp.com",
+            projectId: "antocap-referrals",
+            storageBucket: "antocap-referrals.appspot.com",
+            messagingSenderId: "1071760453747",
+            appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
+            measurementId: "G-EPLJB8MTRH"
+        };
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
-    authDomain: "antocap-referrals.firebaseapp.com",
-    projectId: "antocap-referrals",
-    storageBucket: "antocap-referrals.appspot.com",
-    messagingSenderId: "1071760453747",
-    appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
-    measurementId: "G-EPLJB8MTRH"
-};
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const analytics = firebase.analytics();
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const analytics = getAnalytics(app);
+        // Example usage: Check Firebase initialization
+        console.log("Firebase app initialized:", firebase.app().name);
+        // Check if the user is an admin
+        async function checkAdmin() {
+            try {
+                const user = auth.currentUser;
+                if (user) {
+                    const adminDoc = await db.collection('admins').doc(user.uid).get();
+                    if (adminDoc.exists) {
+                        // User is an admin
+                        document.getElementById('admin-content').style.display = 'block';
+                        loadUserData();
+                    } else {
+                        // User is not an admin
+                        document.getElementById('no-access').style.display = 'block';
+                    }
+                } else {
+                    // No user is signed in
+                    document.getElementById('no-access').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                document.getElementById('no-access').style.display = 'block';
+            }
+        }
 
         // Fetch and display data
         async function loadUserData() {
@@ -122,7 +151,7 @@ const analytics = getAnalytics(app);
                 querySnapshot.forEach((doc) => {
                     totalUsers++;
                     const data = doc.data();
-                    const paid = data.paymentConfirmation === 'true'; // Assuming 'true' means paid
+                    const paid = data.paymentConfirmation === 'true';
 
                     if (paid) {
                         totalPaidUsers++;
@@ -143,9 +172,9 @@ const analytics = getAnalytics(app);
             }
         }
 
-        // Load user data on page load
-        window.onload = loadUserData;
-    </script>
+        // Check admin status on page load
+        auth.onAuthStateChanged(checkAdmin);
+</script>
 </body>
           </html>
   
