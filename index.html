@@ -146,7 +146,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js";
 
@@ -171,9 +171,11 @@
             const errorMessage = document.getElementById('error-message');
 
             try {
+                console.log("Attempting login with email:", email);
                 await signInWithEmailAndPassword(auth, email, password);
                 const user = auth.currentUser;
                 if (user) {
+                    console.log("User signed in:", user.uid);
                     const adminDoc = await getDoc(doc(db, 'admins', user.uid));
                     if (adminDoc.exists()) {
                         // Hide login and show admin panel
@@ -185,14 +187,15 @@
                     }
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 errorMessage.textContent = error.message;
             }
         }
 
         async function loadUserData() {
             try {
-                const usersCollection = db.collection('users');
-                const querySnapshot = await usersCollection.get();
+                const usersCollection = collection(db, 'users');
+                const querySnapshot = await getDocs(usersCollection);
                 let totalUsers = 0;
                 let totalPaidUsers = 0;
                 let totalAmount = 0;
