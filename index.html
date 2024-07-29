@@ -89,14 +89,27 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            // Your firebase configuration object
-        };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js";
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
+    authDomain: "antocap-referrals.firebaseapp.com",
+    projectId: "antocap-referrals",
+    storageBucket: "antocap-referrals.appspot.com",
+    messagingSenderId: "1071760453747",
+    appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
+    measurementId: "G-EPLJB8MTRH"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const analytics = getAnalytics(app);
 
         // Fetch and display data
         async function loadUserData() {
