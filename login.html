@@ -11,101 +11,106 @@
             margin: 0;
             padding: 20px;
         }
-        .login-container {
+        .container {
             max-width: 400px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
-            border: 1px solid #ddd;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .login-container h1 {
+        h2 {
             text-align: center;
             color: #333;
         }
-        .login-container input {
-            width: calc(100% - 20px);
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
             padding: 10px;
-            margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .login-container button {
+        .form-group button {
             width: 100%;
             padding: 10px;
-            background-color: #FFD700;
+            background-color: #007bff;
             border: none;
             border-radius: 5px;
-            font-size: 1em;
             color: #fff;
+            font-size: 16px;
             cursor: pointer;
         }
-        .login-container button:hover {
-            background-color: #e0b800;
+        .form-group button:hover {
+            background-color: #0056b3;
         }
-        .error-message {
+        .error {
             color: red;
             text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h1>Admin Login</h1>
-        <form id="admin-login-form">
-            <input type="email" id="admin-email" placeholder="Email" required>
-            <input type="password" id="admin-password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        <p id="error-message" class="error-message"></p>
+    <div class="container">
+        <h2>Admin Login</h2>
+        <div class="error" id="error-message"></div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        <div class="form-group">
+            <button onclick="login()">Login</button>
+        </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"></script>
-    <script>
-        // Firebase configuration
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
-            measurementId: "YOUR_MEASUREMENT_ID"
+            apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
+            authDomain: "antocap-referrals.firebaseapp.com",
+            projectId: "antocap-referrals",
+            storageBucket: "antocap-referrals.appspot.com",
+            messagingSenderId: "1071760453747",
+            appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
+            measurementId: "G-EPLJB8MTRH"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-        // Handle login form submission
-        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('error-message');
 
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-
-                // Check if user is an admin
-                const adminDoc = await db.collection('admins').doc(user.uid).get();
-                if (adminDoc.exists) {
-                    // Redirect to admin panel
-                    window.location.href = '/admin-panel.html';
-                } else {
-                    throw new Error('You do not have access to the admin panel.');
+                await signInWithEmailAndPassword(auth, email, password);
+                // Check if the user is an admin
+                const user = auth.currentUser;
+                if (user) {
+                    const adminDoc = await db.collection('admins').doc(user.uid).get();
+                    if (adminDoc.exists) {
+                        // Redirect to admin panel
+                        window.location.href = 'admin-panel.html';
+                    } else {
+                        errorMessage.textContent = 'You are not authorized as an admin.';
+                    }
                 }
             } catch (error) {
-                console.error("Error during login:", error);
                 errorMessage.textContent = error.message;
             }
-        });
+        }
     </script>
 </body>
 </html>
