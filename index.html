@@ -271,6 +271,48 @@ function fetchPendingPayments() {
 
 // Call the function to fetch pending payments when the admin page loads
 fetchPendingPayments();
+// Confirm payment function
+function confirmPayment(paymentId) {
+    db.collection('payments').doc(paymentId).update({
+        status: "Confirmed",
+        adminAction: "Confirmed",
+        confirmationTimestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        alert('Payment confirmed successfully.');
+    }).catch((error) => {
+        console.error('Error confirming payment:', error);
+    });
+}
+
+// Reject payment function
+function rejectPayment(paymentId) {
+    db.collection('payments').doc(paymentId).update({
+        status: "Rejected",
+        adminAction: "Rejected",
+        confirmationTimestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        alert('Payment rejected.');
+    }).catch((error) => {
+        console.error('Error rejecting payment:', error);
+    });
+}
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        // Check if the user is an admin
+        db.collection('users').doc(user.uid).get().then((doc) => {
+            if (doc.exists && doc.data().role === 'admin') {
+                // Display the admin panel
+                document.getElementById('admin-panel').style.display = 'block';
+            } else {
+                // Redirect non-admins
+                alert('You are not authorized to view this page.');
+                window.location.href = '/';
+            }
+        });
+    } else {
+        window.location.href = '/login'; // Redirect to login if not authenticated
+    }
+});
 
     </script>
 </body>
