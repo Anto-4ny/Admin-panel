@@ -143,6 +143,23 @@
             </tbody>
         </table>
     </div>
+<div id="admin-panel">
+    <h2>Pending Payments</h2>
+    <table id="pending-payments-table">
+        <thead>
+            <tr>
+                <th>Phone Number</th>
+                <th>Amount</th>
+                <th>MPESA Code</th>
+                <th>User ID</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="pending-payments-body">
+            <!-- Rows will be populated by JavaScript -->
+        </tbody>
+    </table>
+</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -223,6 +240,38 @@
                 console.error('Error fetching user data:', error);
             }
         }
+        // Reference to Firestore
+const db = firebase.firestore();
+
+// Function to fetch pending payments
+function fetchPendingPayments() {
+    db.collection('payments').where('status', '==', 'Pending')
+    .onSnapshot((querySnapshot) => {
+        const paymentsTableBody = document.getElementById('pending-payments-body');
+        paymentsTableBody.innerHTML = '';  // Clear the table before adding new rows
+        
+        querySnapshot.forEach((doc) => {
+            const paymentData = doc.data();
+            const paymentRow = `
+                <tr>
+                    <td>${paymentData.phoneNumber}</td>
+                    <td>${paymentData.amount}</td>
+                    <td>${paymentData.mpesaCode}</td>
+                    <td>${paymentData.userId}</td>
+                    <td>
+                        <button onclick="confirmPayment('${doc.id}')">Confirm</button>
+                        <button onclick="rejectPayment('${doc.id}')">Reject</button>
+                    </td>
+                </tr>
+            `;
+            paymentsTableBody.innerHTML += paymentRow;
+        });
+    });
+}
+
+// Call the function to fetch pending payments when the admin page loads
+fetchPendingPayments();
+
     </script>
 </body>
 </html>
