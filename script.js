@@ -1,25 +1,23 @@
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
 
-    // Firebase config
-    const firebaseConfig = {
-        apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
-        authDomain: "antocap-referrals.firebaseapp.com",
-        projectId: "antocap-referrals",
-        storageBucket: "antocap-referrals.appspot.com",
-        messagingSenderId: "1071760453747",
-        appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
-        measurementId: "G-EPLJB8MTRH"
-    };
-
-    // Initialize Firebase services
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  // Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyB7t1wWHhPYBitqKC4SJ8lqP1WMLDefCxo",
+    authDomain: "antocap-referrals.firebaseapp.com",
+    projectId: "antocap-referrals",
+    storageBucket: "antocap-referrals.appspot.com",
+    messagingSenderId: "1071760453747",
+    appId: "1:1071760453747:web:fafa7ac624ba7452e6fa06",
+    measurementId: "G-EPLJB8MTRH"
+};
+    const app = initializeApp(firebaseConfig); // Initialize Firebase inside DOMContentLoaded
     const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
     const analytics = getAnalytics(app);
-
     // Login function
     async function login() {
         const email = document.getElementById('email').value;
